@@ -1,0 +1,594 @@
+{
+	"__schema" : "4.1",
+	"__type" : "page",
+	"children" : {
+		"__type" : "snippets",
+		"items" : [
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:27:06.507109-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:27:06.507109-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "i7jST74sTba3/9T1ev2h6w=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "Ensemble is a project and task management system built as inspectable Smalltalk objects with Lepiter persistence. This page documents the architecture and design decisions."
+			},
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:27:38.015057-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:27:38.015057-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "XOTmZw2pQUaSMCxuJjb8/w=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "# Domain Model"
+			},
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:27:49.930767-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:27:49.930767-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "Aeby3fwtSE20OMvW9YAwyQ=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "The core domain has three layers:\n\n**Board** ({{gtClass:GtEnsembleBoard}}) — the top-level singleton managing all projects. Loaded via `GtEnsembleBoard current`. Scans all loaded Lepiter databases for ensemble snippets.\n\n**Project** ({{gtClass:GtEnsembleProject}}) — a named project with status, directory, description, and a collection of tasks. Each project is backed by a Lepiter page containing a {{gtClass:GtEnsembleProjectSnippet}}.\n\n**Task** ({{gtClass:GtEnsembleTask}}) — an individual task with title, status, priority, notes, and tags. Each task is backed by a {{gtClass:GtEnsembleTaskSnippet}} on the project's Lepiter page.\n\n**Tag** ({{gtClass:GtEnsembleTag}}) — a named, colored label that can be assigned to tasks for cross-cutting categorization."
+			},
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:28:07.272596-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:28:07.272596-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "sGxSVlBoT7K5WRVO+gHPiA=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "# Board Elements — Composition over Inheritance"
+			},
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:28:24.035963-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:28:24.035963-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "WiRvMligSRq+SEUNxo2Wkw=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "The kanban board UI uses **composition** rather than inheritance. There are three element classes:\n\n**{{gtClass:GtEnsembleBoardElement}}** — a pure kanban layout engine (subclass of `BrHorizontalPane`). Groups items by a bucket block, renders columns with drag-and-drop. Knows nothing about projects or tasks — it just takes a collection, a grouping function, and a group class.\n\n**{{gtClass:GtEnsembleProjectBoardElement}}** — composes a `GtEnsembleBoardElement` with a project-specific toolbar containing an \"Add project\" button and {{gtClass:GtEnsembleProjectForm}}.\n\n**{{gtClass:GtEnsembleTaskBoardElement}}** — composes a `GtEnsembleBoardElement` with a task-specific toolbar containing an \"Add task\" button and {{gtClass:GtEnsembleTaskForm}}. Accepts an optional project for scoping: when scoped, the form pre-fills the project; when unscoped (all tasks), the form shows a project picker.\n\nThis design was chosen because:\n- The board element is a **reusable layout widget**, not a domain concept — subclassing it per type would couple layout to domain logic\n- Each context (home card, inspector view, Lepiter snippet) can wrap the same board with different chrome\n- Adding a new board type (e.g., by-tag board) only requires a new wrapper, not a new base class"
+			},
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:28:30.306917-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:28:30.306917-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "gADUcZNASQ2Lz7mMvwnKbw=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "# Lepiter Persistence"
+			},
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:29:26.304764-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:29:26.304764-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "/oGBOByJRu6mLSIeYImEMA=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "Each project is a Lepiter page. The page's first child is a {{gtClass:GtEnsembleProjectSnippet}} storing project metadata (name, directory, description, status). Subsequent children are {{gtClass:GtEnsembleTaskSnippet}} instances — one per task.\n\n**Snippet setters** follow the idiomatic Lepiter pattern:\n1. Set the ivar\n2. Call `self updateEditTimeAndEmail` to stamp the edit time\n3. Call `self announceContentChangedBy: self` to notify the UI\n\n**Syncing** between domain objects and snippets is bidirectional:\n- Domain → Snippet: setters on {{gtClass:GtEnsembleProject}} and {{gtClass:GtEnsembleTask}} call `syncToSnippet`\n- Snippet → Domain: snippet setters call `syncFromSnippet` on the linked domain object\n- A `syncing` guard ivar prevents re-entrant loops in both directions"
+			},
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:29:33.68787-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:29:33.68787-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "jBZguhzKTQKyoOb7JI8rdQ=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "# Multi-Database Support"
+			},
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:29:44.507434-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:29:44.507434-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "lpI59VWbQjqrdCYOjW7sNA=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "Ensemble is **not coupled to a single Lepiter database**. {{gtMethod:GtEnsembleBoard>>#loadFromLepiter}} scans all loaded databases for pages containing ensemble snippets. Any page in any database that contains a {{gtClass:GtEnsembleProjectSnippet}} or {{gtClass:GtEnsembleTaskSnippet}} is automatically discovered.\n\nWhen creating a new project, the {{gtClass:GtEnsembleProjectForm}} includes a database picker (defaulting to the first loaded database). Once created, the project's database association is implicit — the page lives in the database, and the project links to the page.\n\nThis means users can keep their project pages in their own personal Lepiter database rather than in the gt4ensemble repository database. The gt4ensemble database should contain only documentation and example pages."
+			},
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:29:49.503345-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:29:49.503345-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "VYe6K9kfQ3mlRF/UhTcgsQ=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "# Board Snippet — {{gtClass:GtEnsembleBoardSnippet}}"
+			},
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:29:57.720326-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:31:24.792041-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "DGhTlm8NTRGssTbOaCqUXw=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "The {{gtClass:GtEnsembleBoardSnippet}} embeds a kanban board inline in a Lepiter page. A single snippet class supports three modes via two parameters (`boardType` and `projectName`):"
+			},
+			{
+				"__type" : "elementSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:32:30.806836-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:32:30.806836-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "jQT0i0UtQlOyS2xd2GYN9Q=="
+				},
+				"code" : "| view |\nview := GtPhlowColumnedListView new.\nview items: [ {\n\t{ 'project' . '(ignored)' . 'Shows all projects via GtEnsembleProjectBoardElement' }.\n\t{ 'task' . 'a project name' . 'Shows tasks for that project via GtEnsembleTaskBoardElement' }.\n\t{ 'task' . 'nil' . 'Shows all tasks across all projects' }.\n} ].\nview column: 'boardType' text: [ :row | row first ] weight: 0.3.\nview column: 'projectName' text: [ :row | row second ] weight: 0.3.\nview column: 'Behavior' text: [ :row | row third ] weight: 0.6.\nview asElement",
+				"elementHeight" : 120,
+				"codeHeight" : 50,
+				"codeVisible" : false
+			},
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:32:42.032117-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:32:42.032117-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "jsr13almRlqfS9zR1y8Qsg=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "Existing snippets default to `boardType: 'task'` for backwards compatibility."
+			},
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:30:03.329915-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:30:03.329915-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "DROS//CuS0KQdWMNlXDhyA=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "# Package Structure"
+			},
+			{
+				"__type" : "textSnippet",
+				"children" : {
+					"__type" : "snippets",
+					"items" : [ ]
+				},
+				"createEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"createTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:30:35.682165-04:00"
+					}
+				},
+				"editEmail" : {
+					"__type" : "email",
+					"emailString" : "<unknown>"
+				},
+				"editTime" : {
+					"__type" : "time",
+					"time" : {
+						"__type" : "dateAndTime",
+						"dateAndTimeString" : "2026-04-06T20:30:35.682165-04:00"
+					}
+				},
+				"uid" : {
+					"__type" : "uid",
+					"uidString" : "1GmypOFzSmCn1zogQHxVaA=="
+				},
+				"paragraphStyle" : {
+					"__type" : "textStyle"
+				},
+				"string" : "- **Ensemble-Model** — domain objects: {{gtClass:GtEnsembleBoard}}, {{gtClass:GtEnsembleProject}}, {{gtClass:GtEnsembleTask}}, {{gtClass:GtEnsembleTag}}, {{gtClass:GtEnsembleSession}}, group classes\n- **Ensemble-UI** — board elements, card elements, forms, home section: {{gtClass:GtEnsembleBoardElement}}, {{gtClass:GtEnsembleProjectBoardElement}}, {{gtClass:GtEnsembleTaskBoardElement}}, {{gtClass:GtEnsembleProjectForm}}, {{gtClass:GtEnsembleTaskForm}}, {{gtClass:GtEnsembleHomeSection}}\n- **Ensemble-Lepiter** — snippet types and their view models/elements: {{gtClass:GtEnsembleBoardSnippet}}, {{gtClass:GtEnsembleProjectSnippet}}, {{gtClass:GtEnsembleTaskSnippet}} and their corresponding element and view model classes\n- **Ensemble-Examples** — {{gtClass:GtEnsembleExamples}} with `gtExample` methods for testing and documentation"
+			}
+		]
+	},
+	"createEmail" : {
+		"__type" : "email",
+		"emailString" : "<unknown>"
+	},
+	"createTime" : {
+		"__type" : "time",
+		"time" : {
+			"__type" : "dateAndTime",
+			"dateAndTimeString" : "2026-04-06T20:27:06.500915-04:00"
+		}
+	},
+	"editEmail" : {
+		"__type" : "email",
+		"emailString" : "<unknown>"
+	},
+	"editTime" : {
+		"__type" : "time",
+		"time" : {
+			"__type" : "dateAndTime",
+			"dateAndTimeString" : "2026-04-06T20:27:06.500915-04:00"
+		}
+	},
+	"pageType" : {
+		"__type" : "namedPage",
+		"title" : "Ensemble Architecture"
+	},
+	"uid" : {
+		"__type" : "uuid",
+		"uuid" : "ce4f0972-28c3-4e86-a907-87f33d7a05a4"
+	}
+}
