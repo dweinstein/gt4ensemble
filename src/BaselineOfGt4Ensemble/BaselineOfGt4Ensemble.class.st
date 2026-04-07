@@ -20,14 +20,23 @@ BaselineOfGt4Ensemble class >> loadLepiter [
 			self inform: 'Repository not found.' ]
 ]
 
-{ #category : 'baseline' }
+{ #category : 'baselines' }
 BaselineOfGt4Ensemble >> baseline: spec [
 	<baseline>
-		^ spec for: #common do: [
-			spec package: 'Gt4Ensemble'.
-			spec package: 'Ensemble-Examples'.
-			spec package: 'Ensemble-Lepiter'.
-			spec package: 'Ensemble-Model'.
-			spec package: 'Ensemble-UI'.
-		]
+	^ spec for: #common do: [
+		spec package: 'Gt4Ensemble'.
+		spec package: 'Ensemble-Examples'.
+		spec package: 'Ensemble-Lepiter'.
+		spec package: 'Ensemble-Model'.
+		spec package: 'Ensemble-UI'.
+		spec postLoadDoIt: #postLoad.
+	]
+]
+
+{ #category : 'loading' }
+BaselineOfGt4Ensemble >> postLoad [
+	"Reset the Lepiter JSON mapper so ensemble snippet types are recognized,
+	then rehydrate any LeUnknownSnippet instances that were loaded before
+	the Ensemble package was available."
+	GtEnsembleBoard reloadSnippetMappings
 ]

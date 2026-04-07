@@ -28,6 +28,35 @@ GtEnsembleBoard class >> newEmpty [
 	^ board
 ]
 
+{ #category : 'utilities' }
+GtEnsembleBoard class >> reloadSnippetMappings [
+	"After loading Ensemble into a fresh image, call this to convert
+	 any LeUnknownSnippet back into proper ensemble snippet objects.
+	 Note: db reload does NOT resolve already-cached unknowns."
+	| ensembleTypes |
+	LeJsonV4 cleanUniqueInstance.
+	ensembleTypes := #('ensembleProjectSnippet' 'ensembleTaskSnippet' 'ensembleBoardSnippet').
+	LeDatabasesRegistry default defaultLogicalDatabase databases do: [ :db |
+		| unknowns |
+		unknowns := OrderedCollection new.
+		db pages do: [ :page |
+			page allChildrenDepthFirst do: [ :s |
+				(s isKindOf: LeUnknownSnippet) ifTrue: [
+					(ensembleTypes anySatisfy: [ :t | s jsonString includesSubstring: t ])
+						ifTrue: [ unknowns add: { page. s } ] ] ] ].
+		unknowns ifNotEmpty: [
+			db monitor stopMonitoring.
+			unknowns do: [ :pair |
+				| page stale fresh |
+				page := pair first.
+				stale := pair second.
+				fresh := LeJsonV4 uniqueInstance deserialize: stale jsonString readStream.
+				fresh uid: stale uid.
+				page removeSnippet: stale.
+				page addSnippet: fresh ].
+			db monitor startMonitoring ] ]
+]
+
 { #category : 'accessing' }
 GtEnsembleBoard class >> reset [
 	current := nil
