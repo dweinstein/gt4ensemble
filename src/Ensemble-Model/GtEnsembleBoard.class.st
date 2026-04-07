@@ -15,7 +15,10 @@ Class {
 
 { #category : 'accessing' }
 GtEnsembleBoard class >> current [
-	^ current ifNil: [ current := self new ]
+	^ current ifNil: [ 
+		current := self new.
+		current loadFromLepiter.
+		current ]
 ]
 
 { #category : 'instance creation' }
@@ -222,8 +225,7 @@ GtEnsembleBoard >> inProgressTaskCount [
 { #category : 'initialization' }
 GtEnsembleBoard >> initialize [
 	projects := OrderedCollection new.
-	tags := GtEnsembleTag all asOrderedCollection.
-	self loadFromLepiter
+	tags := GtEnsembleTag all asOrderedCollection
 ]
 
 { #category : 'persistence' }
