@@ -142,23 +142,29 @@ GtEnsembleProject >> gtBoardFor: aView [
 		stencil: [ GtEnsembleTaskBoardElement forTasks: self tasks project: self ]
 ]
 
-{ #category : 'actions' }
+{ #category : 'gt-actions' }
 GtEnsembleProject >> gtDeleteActionFor: anAction [
 	<gtAction>
 	^ anAction dropdown
-		tooltip: 'Delete project';
+		tooltip: 'Remove project from board (keeps Lepiter page)';
 		priority: 50;
 		icon: BrGlamorousVectorIcons remove;
 		content: [ :aDropdown |
 			| confirm |
-			confirm := BrButton new
-				label: 'Delete "', (name ifNil: [ '?' ]), '"';
+			confirm := BrVerticalPane new fitContent.
+			confirm padding: (BlInsets all: 10).
+			confirm addChild: (BrLabel new
+				text: ('Remove "' , (name ifNil: [ '?' ]) , '" from board?' , String cr,
+					'The Lepiter page will be kept intact.');
+				aptitude: BrGlamorousLabelAptitude new;
+				margin: (BlInsets bottom: 8)).
+			confirm addChild: (BrButton new
+				label: 'Remove';
 				aptitude: BrGlamorousButtonWithLabelAptitude new;
 				action: [ :btn |
 					GtEnsembleBoard current deleteProject: self.
 					aDropdown fireEvent: BrDropdownHideWish new.
-					btn phlow spawnObject: GtEnsembleBoard current ].
-			confirm padding: (BlInsets all: 10).
+					btn phlow spawnObject: GtEnsembleBoard current ]).
 			confirm ]
 ]
 

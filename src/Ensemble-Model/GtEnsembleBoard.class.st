@@ -141,12 +141,18 @@ GtEnsembleBoard >> defaultDatabase [
 
 { #category : 'persistence' }
 GtEnsembleBoard >> deleteProject: aProject [
-	"Remove a project from the board and delete its Lepiter page"
+	"Remove a project from the board and strip its ensemble snippets from the
+	 Lepiter page. The page itself is preserved — it contains user content and
+	 is the source of truth. Without the project/task snippets, the next
+	 loadFromLepiter won't reconstruct the project."
 	| page |
 	projects remove: aProject ifAbsent: [].
 	page := aProject page.
-	(page notNil and: [ page database notNil ]) ifTrue: [
-		page database removePage: page ].
+	page ifNotNil: [
+		(page children asArray select: [ :s | 
+			(s isKindOf: GtEnsembleProjectSnippet) or: [ 
+			s isKindOf: GtEnsembleTaskSnippet ] ])
+			do: [ :s | page removeSnippet: s ] ].
 	self announcer announce: GtEnsembleBoardUpdated new
 ]
 
