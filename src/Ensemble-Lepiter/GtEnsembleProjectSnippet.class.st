@@ -81,6 +81,19 @@ GtEnsembleProjectSnippet >> createLinkedProject [
 	^ proj
 ]
 
+{ #category : 'gt-views' }
+GtEnsembleProjectSnippet >> gtEditFor: aView [
+	<gtView>
+	| linkedProject |
+	linkedProject := self linkedProject.
+	linkedProject ifNil: [ ^ aView empty ].
+	^ aView forward
+		title: 'Edit';
+		priority: 2;
+		object: [ linkedProject ];
+		view: #gtMagritteFor:
+]
+
 { #category : 'initialization' }
 GtEnsembleProjectSnippet >> initialize [
 	super initialize.

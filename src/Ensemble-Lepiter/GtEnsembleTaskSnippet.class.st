@@ -79,6 +79,19 @@ GtEnsembleTaskSnippet >> createLinkedTask [
 	^ newTask
 ]
 
+{ #category : 'gt-views' }
+GtEnsembleTaskSnippet >> gtEditFor: aView [
+	<gtView>
+	| linkedTask |
+	linkedTask := self linkedTask.
+	linkedTask ifNil: [ ^ aView empty ].
+	^ aView forward
+		title: 'Edit';
+		priority: 2;
+		object: [ linkedTask ];
+		view: #gtMagritteFor:
+]
+
 { #category : 'initialization' }
 GtEnsembleTaskSnippet >> initialize [
 	super initialize.
