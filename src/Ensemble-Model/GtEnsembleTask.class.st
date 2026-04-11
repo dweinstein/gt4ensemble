@@ -213,11 +213,13 @@ GtEnsembleTask >> notesDescription [
 { #category : 'printing' }
 GtEnsembleTask >> printOn: aStream [
 	super printOn: aStream.
-	aStream nextPutAll: '('.
-	aStream nextPutAll: (title ifNil: [ 'untitled' ]).
-	aStream nextPutAll: ' ['.
-	aStream nextPutAll: (status ifNil: [ '?' ]).
-	aStream nextPutAll: '])'
+	aStream
+		nextPut: $(;
+		nextPutAll: (title ifNil: [ 'untitled' ]);
+		nextPutAll: ' [';
+		nextPutAll: (status ifNil: [ '?' ]);
+		nextPut: $];
+		nextPut: $)
 ]
 
 { #category : 'accessing' }
@@ -235,10 +237,18 @@ GtEnsembleTask >> priority: anInteger [
 { #category : 'magritte-descriptions' }
 GtEnsembleTask >> priorityDescription [
 	<magritteDescription>
-	^ MANumberDescription new
+	^ MASingleOptionDescription new
 		label: 'Priority';
 		priority: 3;
 		accessor: #priority;
+		options: #(nil 1 2 3 4 5);
+		display: [ :v | 
+			v ifNil: [ 'None' ] ifNotNil: [ 
+				{ 1 -> 'P1 (Highest)'.
+				  2 -> 'P2 (High)'.
+				  3 -> 'P3 (Medium)'.
+				  4 -> 'P4 (Low)'.
+				  5 -> 'P5 (Lowest)' } asDictionary at: v ifAbsent: [ v asString ] ] ];
 		labelAptitude: [ BrGlamorousLabelAptitude new glamorousFormLabelStyle ]
 ]
 

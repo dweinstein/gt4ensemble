@@ -334,9 +334,21 @@ GtEnsembleProject >> page: aPage [
 { #category : 'printing' }
 GtEnsembleProject >> printOn: aStream [
 	super printOn: aStream.
-	aStream nextPutAll: '('.
-	aStream nextPutAll: (name ifNil: [ 'unnamed' ]).
-	aStream nextPutAll: ')'
+	aStream
+		nextPut: $(;
+		nextPutAll: (name ifNil: [ 'unnamed' ]);
+		nextPutAll: ' [';
+		nextPutAll: (status ifNil: [ '?' ]).
+	tasks ifNotNil: [ 
+		tasks size > 0 ifTrue: [
+			aStream
+				nextPutAll: ', ';
+				print: tasks size;
+				nextPutAll: ' task';
+				nextPutAll: (tasks size = 1 ifTrue: [ '' ] ifFalse: [ 's' ]) ] ].
+	aStream
+		nextPut: $];
+		nextPut: $)
 ]
 
 { #category : 'accessing' }
