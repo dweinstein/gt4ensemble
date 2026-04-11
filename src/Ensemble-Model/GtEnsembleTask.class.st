@@ -61,7 +61,8 @@ GtEnsembleTask >> gtAddTagActionFor: anAction [
 						self addTag: tag.
 						aDropdown enqueueTask: (BlTaskAction new action: [
 							aDropdown fireEvent: BrDropdownHideWish new.
-							aDropdown phlow spawnObject: self ]) ] ];
+							aDropdown phlow fireViewUpdateWish.							
+							"aDropdown phlow spawnObject: self" ]) ] ];
 				items: availableTags;
 				hExact: 200;
 				vFitContentLimited.
