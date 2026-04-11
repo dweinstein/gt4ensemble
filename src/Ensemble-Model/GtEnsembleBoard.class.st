@@ -203,7 +203,7 @@ GtEnsembleBoard >> gtProjectsBoardFor: aView [
 		stencil: [ GtEnsembleProjectBoardElement forProjects: self projects ]
 ]
 
-{ #category : 'views' }
+{ #category : 'gt-views' }
 GtEnsembleBoard >> gtProjectsFor: aView [
 	<gtView>
 	^ aView columnedList
@@ -212,6 +212,7 @@ GtEnsembleBoard >> gtProjectsFor: aView [
 		items: [ self projects ];
 		column: 'Status' text: [ :p | p status ] width: 100;
 		column: 'Name' text: [ :p | p name ];
+		column: 'Database' text: [ :p | p databaseName ] width: 200;
 		column: 'Tasks' text: [ :p | p taskCount asString ] width: 60;
 		column: 'Active' text: [ :p | p activeTaskCount asString ] width: 60;
 		column: 'Directory' text: [ :p | p directory ifNil: [ '' ] ifNotNil: [ :d | d pathString ] ]
@@ -225,7 +226,7 @@ GtEnsembleBoard >> inProgressTaskCount [
 { #category : 'initialization' }
 GtEnsembleBoard >> initialize [
 	projects := OrderedCollection new.
-	tags := GtEnsembleTag all asOrderedCollection
+	tags := GtEnsembleTagGroup withAll: GtEnsembleTag all
 ]
 
 { #category : 'persistence' }
@@ -245,9 +246,14 @@ GtEnsembleBoard >> loadFromLepiter [
 
 { #category : 'persistence' }
 GtEnsembleBoard >> loadProjectMetadata: aPage into: proj [
-	"Load metadata from project snippet"
-	(aPage children isNotEmpty and: [ aPage children first isKindOf: GtEnsembleProjectSnippet ]) ifFalse: [ ^ self ].
+	"Load metadata from project snippet and establish two-way link"
+	| metaSnippet |
+	metaSnippet := aPage children asArray 
+		detect: [ :s | s isKindOf: GtEnsembleProjectSnippet ] 
+		ifNone: [ nil ].
+	metaSnippet ifNil: [ ^ self ].
 	proj page: aPage.
+	metaSnippet project: proj.
 	proj syncFromSnippet
 ]
 
@@ -347,40 +353,38 @@ GtEnsembleBoard >> saveProject: aProject [
 { #category : 'persistence' }
 GtEnsembleBoard >> saveProjectMetadata: aProject toPage: page [
 	| metaSnippet |
-	(page children isNotEmpty and: [ page children first isKindOf: GtEnsembleProjectSnippet ])
-		ifTrue: [
-			metaSnippet := page children first.
-			metaSnippet projectName: aProject name.
-			metaSnippet projectDirectory: (aProject directory ifNil: [ '' ] ifNotNil: [ :d | d pathString ]).
-			metaSnippet projectDescription: (aProject description ifNil: [ '' ]).
-			metaSnippet projectStatus: (aProject status ifNil: [ 'Backlog' ]) ]
-		ifFalse: [
-			metaSnippet := GtEnsembleProjectSnippet new.
-			metaSnippet projectName: aProject name.
-			metaSnippet projectDirectory: (aProject directory ifNil: [ '' ] ifNotNil: [ :d | d pathString ]).
-			metaSnippet projectDescription: (aProject description ifNil: [ '' ]).
-			metaSnippet projectStatus: (aProject status ifNil: [ 'Backlog' ]).
-			page addSnippet: metaSnippet ]
+	metaSnippet := page children asArray 
+		detect: [ :s | s isKindOf: GtEnsembleProjectSnippet ] 
+		ifNone: [ nil ].
+	metaSnippet ifNil: [
+		metaSnippet := GtEnsembleProjectSnippet new.
+		page addSnippet: metaSnippet ].
+	"Temporarily clear back-ref so setters don't trigger sync-back"
+	metaSnippet project: nil.
+	metaSnippet projectName: aProject name.
+	metaSnippet projectDirectory: (aProject directory ifNil: [ '' ] ifNotNil: [ :d | d pathString ]).
+	metaSnippet projectDescription: (aProject description ifNil: [ '' ]).
+	metaSnippet projectStatus: (aProject status ifNil: [ 'Backlog' ]).
+	"Establish back-ref after all fields are set"
+	metaSnippet project: aProject
 ]
 
 { #category : 'persistence' }
 GtEnsembleBoard >> saveProjectTasks: aProject toPage: page [
-	"Remove existing task snippets and re-add from domain model"
-	(page children select: [ :s | s isKindOf: GtEnsembleTaskSnippet ]) 
-		do: [ :s | page removeSnippet: s ].
-	
+	"Sync domain tasks to snippets without destroying user-added snippets.
+	 - Tasks with a back-ref snippet get updated in place
+	 - Tasks without a snippet get a new snippet appended
+	 - User-added snippets without a task back-ref are left untouched"
 	aProject tasks do: [ :task |
 		| snippet |
-		snippet := GtEnsembleTaskSnippet new.
-		snippet title: task title.
-		snippet status: task status.
-		snippet priority: task priority.
-		snippet taskNotes: task notes.
-		snippet tagNames: (task tags collect: [ :t | t name ]) asArray.
-		"Establish two-way binding"
-		task snippet: snippet.
-		snippet task: task.
-		page addSnippet: snippet ]
+		snippet := task snippet.
+		snippet ifNil: [
+			snippet := GtEnsembleTaskSnippet new.
+			task snippet: snippet.
+			snippet task: task.
+			page addSnippet: snippet ].
+		"Push current task state to the snippet"
+		task syncToSnippet ]
 ]
 
 { #category : 'statistics' }

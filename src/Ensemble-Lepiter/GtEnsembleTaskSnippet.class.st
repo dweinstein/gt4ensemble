@@ -62,12 +62,53 @@ GtEnsembleTaskSnippet >> contentAsString [
 	^ title ifNil: [ '' ]
 ]
 
+{ #category : 'accessing' }
+GtEnsembleTaskSnippet >> createLinkedTask [
+	"Create a GtEnsembleTask in the page's project, linked to this snippet."
+	| proj newTask |
+	proj := self linkedProject.
+	proj ifNil: [ ^ nil ].
+	newTask := GtEnsembleTask new.
+	newTask title: (title ifNil: [ 'Untitled' ]).
+	newTask status: (status ifNil: [ 'Backlog' ]).
+	newTask priority: priority.
+	newTask notes: taskNotes.
+	newTask snippet: self.
+	self task: newTask.
+	proj addTask: newTask.
+	^ newTask
+]
+
 { #category : 'initialization' }
 GtEnsembleTaskSnippet >> initialize [
 	super initialize.
 	status := 'Backlog'.
 	tagNames := #().
 	taskNotes := ''
+]
+
+{ #category : 'accessing' }
+GtEnsembleTaskSnippet >> linkedProject [
+	"Return the GtEnsembleProject that owns this snippet's page, if any."
+	| page proj |
+	page := self page.
+	page ifNil: [ ^ nil ].
+	proj := GtEnsembleBoard current projects 
+		detect: [ :p | p page == page ] 
+		ifNone: [ nil ].
+	^ proj
+]
+
+{ #category : 'accessing' }
+GtEnsembleTaskSnippet >> linkedTask [
+	"Return the linked GtEnsembleTask if one exists.
+	 Primary: direct back-ref (set during loadProjectTasks:into:).
+	 Fallback: scan the board for any task whose snippet uid matches ours."
+	task ifNotNil: [ ^ task ].
+	^ GtEnsembleBoard current allTasks items
+		detect: [ :t | 
+			t snippet notNil and: [ t snippet uid = self uid ] ]
+		ifNone: [ nil ]
 ]
 
 { #category : 'export' }

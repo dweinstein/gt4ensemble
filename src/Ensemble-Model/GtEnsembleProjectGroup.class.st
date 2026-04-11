@@ -7,7 +7,7 @@ Class {
 	#package : 'Ensemble-Model'
 }
 
-{ #category : 'views' }
+{ #category : 'gt-views' }
 GtEnsembleProjectGroup >> gtProjectsFor: aView [
 	<gtView>
 	^ aView columnedList
@@ -16,6 +16,7 @@ GtEnsembleProjectGroup >> gtProjectsFor: aView [
 		items: [ self items ];
 		column: 'Status' text: [ :p | p status ] width: 100;
 		column: 'Name' text: [ :p | p name ];
+		column: 'Database' text: [ :p | p databaseName ] width: 200;
 		column: 'Tasks' text: [ :p | p taskCount asString ] width: 60;
 		column: 'Active' text: [ :p | p activeTaskCount asString ] width: 60
 ]

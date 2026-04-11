@@ -29,7 +29,7 @@ GtEnsembleTaskBoardElement class >> forTasks: aCollection project: aProject [
 GtEnsembleTaskBoardElement >> buildAddButton [
 	^ BrButton new
 		aptitude: BrGlamorousButtonWithIconAptitude
-			+ (BrGlamorousWithDropdownAptitude
+			+ (BrGlamorousWithExplicitDropdownAptitude
 				handle: [
 					BrButton new
 						aptitude: BrGlamorousButtonWithIconAptitude - BrGlamorousButtonExteriorAptitude;
@@ -46,12 +46,11 @@ GtEnsembleTaskBoardElement >> buildTaskFormFor: aDropdown [
 	form := project
 		ifNotNil: [ GtEnsembleTaskForm forProject: project ]
 		ifNil: [ GtEnsembleTaskForm new ].
-	form onAccept: [ :task |
-		aDropdown enqueueTask: (BlTaskAction new action: [
-			aDropdown fireEvent: BrDropdownHideWish new.
-			self rebuildBoard.
-			aDropdown phlow spawnObject: task ]) ].
 	element := form asGtMagritteViewModel asElement.
+	form onAccept: [ :task |
+		element enqueueTask: (BlTaskAction new action: [
+			element fireEvent: BrDropdownHideWish new.
+			element phlow spawnObject: task ]) ].
 	element hExact: 400.
 	element vFitContent.
 	element padding: (BlInsets all: 10).
@@ -91,6 +90,21 @@ GtEnsembleTaskBoardElement >> initialize [
 	self matchParent
 ]
 
+{ #category : 'lifecycle' }
+GtEnsembleTaskBoardElement >> onAddedToSceneGraph [
+	super onAddedToSceneGraph.
+	GtEnsembleBoard current announcer weak
+		when: GtEnsembleBoardUpdated
+		send: #requestRebuildBoard
+		to: self
+]
+
+{ #category : 'lifecycle' }
+GtEnsembleTaskBoardElement >> onRemovedFromSceneGraph [
+	GtEnsembleBoard current announcer unsubscribe: self.
+	super onRemovedFromSceneGraph
+]
+
 { #category : 'updating' }
 GtEnsembleTaskBoardElement >> rebuildBoard [
 	| tasks newBoard |
@@ -100,4 +114,10 @@ GtEnsembleTaskBoardElement >> rebuildBoard [
 	newBoard := GtEnsembleBoardElement forTasks: tasks.
 	self replaceChild: board with: newBoard.
 	board := newBoard
+]
+
+{ #category : 'building' }
+GtEnsembleTaskBoardElement >> requestRebuildBoard [
+	"Enqueue a rebuild on the UI thread."
+	self enqueueTask: (BlTaskAction new action: [ self rebuildBoard ])
 ]

@@ -35,6 +35,11 @@ GtEnsembleProject class >> name: aString directory: aPath description: aDesc sta
 		yourself
 ]
 
+{ #category : 'accessing' }
+GtEnsembleProject class >> statuses [
+	^ #('Backlog' 'Todo' 'In Progress' 'Done' 'Cancelled')
+]
+
 { #category : 'tasks' }
 GtEnsembleProject >> activeTaskCount [
 	^ (tasks select: [ :t | t isActive ]) size
@@ -45,6 +50,7 @@ GtEnsembleProject >> addTask: aTask [
 	tasks add: aTask.
 	aTask project: self.
 	self touch.
+	GtEnsembleBoard current announcer announce: GtEnsembleBoardUpdated new.
 	^ aTask
 ]
 
@@ -59,6 +65,14 @@ GtEnsembleProject >> createdAt [
 ]
 
 { #category : 'accessing' }
+GtEnsembleProject >> databaseName [
+	"Return the Lepiter database name for this project's page, or empty string."
+	^ self page 
+		ifNotNil: [ :p | p database ifNotNil: [ :d | d databaseName ] ifNil: [ '' ] ]
+		ifNil: [ '' ]
+]
+
+{ #category : 'accessing' }
 GtEnsembleProject >> description [
 	^ description
 ]
@@ -68,6 +82,16 @@ GtEnsembleProject >> description: aString [
 	description := aString.
 	self touch.
 	self syncToSnippet
+]
+
+{ #category : 'magritte-descriptions' }
+GtEnsembleProject >> descriptionDescription [
+	<magritteDescription>
+	^ MAMemoDescription new
+		label: 'Description';
+		priority: 4;
+		accessor: #description;
+		labelAptitude: [ BrGlamorousLabelAptitude new glamorousFormLabelStyle ]
 ]
 
 { #category : 'accessing' }
@@ -80,6 +104,33 @@ GtEnsembleProject >> directory: aFileReference [
 	directory := aFileReference ifNotNil: [ aFileReference asFileReference ].
 	self touch.
 	self syncToSnippet
+]
+
+{ #category : 'magritte-descriptions' }
+GtEnsembleProject >> directoryDescription [
+	<magritteDescription>
+	^ MAStringDescription new
+		label: 'Directory';
+		priority: 3;
+		accessor: #directoryString;
+		labelAptitude: [ BrGlamorousLabelAptitude new glamorousFormLabelStyle ]
+]
+
+{ #category : 'accessing' }
+GtEnsembleProject >> directoryString [
+	^ directory ifNil: [ '' ] ifNotNil: [ :d | d pathString ]
+]
+
+{ #category : 'accessing' }
+GtEnsembleProject >> directoryString: aString [
+	| trimmed |
+	trimmed := aString trimBoth.
+	trimmed isEmpty 
+		ifTrue: [ self directory: nil ]
+		ifFalse: [ 
+			(trimmed beginsWith: '~/')
+				ifTrue: [ self directory: (FileLocator home / (trimmed allButFirst: 2)) ]
+				ifFalse: [ self directory: trimmed asFileReference ] ]
 ]
 
 { #category : 'gt - extensions' }
@@ -228,7 +279,7 @@ GtEnsembleProject >> inferToolFor: aDirectory [
 GtEnsembleProject >> initialize [
 	super initialize.
 	status := 'Backlog'.
-	tasks := OrderedCollection new.
+	tasks := GtEnsembleTaskGroup new.
 	createdAt := DateAndTime now.
 	updatedAt := DateAndTime now
 ]
@@ -257,6 +308,17 @@ GtEnsembleProject >> name [
 GtEnsembleProject >> name: aString [
 	name := aString.
 	self touch
+]
+
+{ #category : 'magritte-descriptions' }
+GtEnsembleProject >> nameDescription [
+	<magritteDescription>
+	^ MAStringDescription new
+		label: 'Name';
+		priority: 1;
+		accessor: #name;
+		labelAptitude: [ BrGlamorousLabelAptitude new glamorousFormLabelStyle ];
+		beRequired
 ]
 
 { #category : 'accessing' }
@@ -291,7 +353,8 @@ GtEnsembleProject >> projectSnippet [
 GtEnsembleProject >> removeTask: aTask [
 	tasks remove: aTask ifAbsent: [].
 	aTask project: nil.
-	self touch
+	self touch.
+	GtEnsembleBoard current announcer announce: GtEnsembleBoardUpdated new
 ]
 
 { #category : 'sessions' }
@@ -325,12 +388,25 @@ GtEnsembleProject >> status [
 GtEnsembleProject >> status: aString [
 	status := aString.
 	self touch.
-	self syncToSnippet
+	self syncToSnippet.
+	GtEnsembleBoard current announcer announce: GtEnsembleBoardUpdated new
 ]
 
 { #category : 'status' }
 GtEnsembleProject >> statusColor [
 	^ GtEnsembleTask new status: status; statusColor
+]
+
+{ #category : 'magritte-descriptions' }
+GtEnsembleProject >> statusDescription [
+	<magritteDescription>
+	^ MASingleOptionDescription new
+		label: 'Status';
+		priority: 2;
+		accessor: #status;
+		options: self class statuses;
+		labelAptitude: [ BrGlamorousLabelAptitude new glamorousFormLabelStyle ];
+		beRequired
 ]
 
 { #category : 'syncing' }
@@ -343,7 +419,8 @@ GtEnsembleProject >> syncFromSnippet [
 	syncing := true.
 	[ directory := (snippet projectDirectory ifEmpty: [ nil ]) ifNotNil: [ :d | d asFileReference ].
 	  description := snippet projectDescription ifEmpty: [ nil ].
-	  status := snippet projectStatus ifNil: [ 'Backlog' ]
+	  status := snippet projectStatus ifNil: [ 'Backlog' ].
+	  self touch
 	] ensure: [ syncing := false ]
 ]
 

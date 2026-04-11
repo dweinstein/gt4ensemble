@@ -54,7 +54,7 @@ GtEnsembleProjectSnippetElement >> buildDirectoryRow [
 
 { #category : 'building' }
 GtEnsembleProjectSnippetElement >> buildHeaderRow [
-	| model header statusButton nameLabel dirButton boardButton |
+	| model header statusButton nameLabel actionButton dirButton linkedProject |
 	model := self snippetViewModel snippetModel.
 	
 	header := BrHorizontalPane new hMatchParent; vFitContent; alignCenterLeft.
@@ -69,17 +69,25 @@ GtEnsembleProjectSnippetElement >> buildHeaderRow [
 	nameLabel hMatchParent.
 	header addChild: nameLabel.
 	
-	boardButton := BrButton new
-		aptitude: BrGlamorousButtonWithIconAptitude new;
-		icon: BrGlamorousVectorIcons inspect;
-		label: 'Open project board';
-		action: [ :btn |
-			| proj |
-			proj := GtEnsembleBoard current projectNamed: model projectName.
-			proj ifNotNil: [
-				btn phlow spawnTool: (GtInspectorTool forObject: proj viewSelector: #gtBoardFor:) ]
-				ifNil: [ btn phlow spawnObject: GtEnsembleBoard current ] ].
-	header addChild: boardButton.
+	linkedProject := model linkedProject.
+	actionButton := linkedProject
+		ifNotNil: [ 
+			BrButton new
+				aptitude: BrGlamorousButtonWithIconAptitude new;
+				icon: BrGlamorousVectorIcons inspect;
+				label: 'Open project board';
+				action: [ :btn |
+					btn phlow spawnTool: (GtInspectorTool 
+						forObject: linkedProject 
+						viewSelector: #gtBoardFor:) ] ]
+		ifNil: [
+			BrButton new
+				aptitude: BrGlamorousButtonWithLabelAptitude + BrGlamorousButtonRectangularAptitude;
+				label: 'Create project';
+				action: [ :btn | 
+					model createLinkedProject.
+					self updateContent ] ].
+	header addChild: actionButton.
 	
 	dirButton := BrButton new
 		aptitude: BrGlamorousButtonWithIconAptitude new;

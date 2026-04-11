@@ -23,7 +23,7 @@ GtEnsembleProjectBoardElement class >> forProjects: aCollection [
 GtEnsembleProjectBoardElement >> buildAddButton [
 	^ BrButton new
 		aptitude: BrGlamorousButtonWithIconAptitude
-			+ (BrGlamorousWithDropdownAptitude
+			+ (BrGlamorousWithExplicitDropdownAptitude
 				handle: [
 					BrButton new
 						aptitude: BrGlamorousButtonWithIconAptitude - BrGlamorousButtonExteriorAptitude;
@@ -38,12 +38,11 @@ GtEnsembleProjectBoardElement >> buildAddButton [
 GtEnsembleProjectBoardElement >> buildProjectFormFor: aDropdown [
 	| form element |
 	form := GtEnsembleProjectForm new.
-	form onAccept: [ :proj |
-		aDropdown enqueueTask: (BlTaskAction new action: [
-			aDropdown fireEvent: BrDropdownHideWish new.
-			self rebuildBoard.
-			aDropdown phlow spawnObject: proj ]) ].
 	element := form asGtMagritteViewModel asElement.
+	form onAccept: [ :proj |
+		element enqueueTask: (BlTaskAction new action: [
+			element fireEvent: BrDropdownHideWish new.
+			element phlow spawnObject: proj ]) ].
 	element hExact: 400.
 	element vFitContent.
 	element padding: (BlInsets all: 10).
@@ -73,10 +72,31 @@ GtEnsembleProjectBoardElement >> initialize [
 	self matchParent
 ]
 
+{ #category : 'lifecycle' }
+GtEnsembleProjectBoardElement >> onAddedToSceneGraph [
+	super onAddedToSceneGraph.
+	GtEnsembleBoard current announcer weak
+		when: GtEnsembleBoardUpdated
+		send: #requestRebuildBoard
+		to: self
+]
+
+{ #category : 'lifecycle' }
+GtEnsembleProjectBoardElement >> onRemovedFromSceneGraph [
+	GtEnsembleBoard current announcer unsubscribe: self.
+	super onRemovedFromSceneGraph
+]
+
 { #category : 'updating' }
 GtEnsembleProjectBoardElement >> rebuildBoard [
 	| newBoard |
 	newBoard := GtEnsembleBoardElement forProjects: GtEnsembleBoard current projects.
 	self replaceChild: board with: newBoard.
 	board := newBoard
+]
+
+{ #category : 'building' }
+GtEnsembleProjectBoardElement >> requestRebuildBoard [
+	"Enqueue a rebuild on the UI thread."
+	self enqueueTask: (BlTaskAction new action: [ self rebuildBoard ])
 ]

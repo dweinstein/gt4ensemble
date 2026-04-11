@@ -109,7 +109,7 @@ GtEnsembleTaskSnippetElement >> buildTagsRowFor: model [
 
 { #category : 'building' }
 GtEnsembleTaskSnippetElement >> buildTopRowFor: model [
-	| topRow statusButton titleEditor |
+	| topRow statusButton titleEditor linkedTask actionButton |
 	topRow := BrHorizontalPane new
 		hMatchParent;
 		vFitContent;
@@ -128,6 +128,18 @@ GtEnsembleTaskSnippetElement >> buildTopRowFor: model [
 			model title: aWish text asString.
 			self updateContent ].
 	topRow addChild: titleEditor.
+	
+	linkedTask := model linkedTask.
+	linkedTask ifNil: [
+		model linkedProject ifNotNil: [
+			actionButton := BrButton new
+				aptitude: BrGlamorousButtonWithLabelAptitude + BrGlamorousButtonRectangularAptitude;
+				label: 'Create task';
+				action: [ :btn | 
+					model createLinkedTask.
+					self updateContent ].
+			topRow addChild: actionButton ] ].
+	
 	^ topRow
 ]
 

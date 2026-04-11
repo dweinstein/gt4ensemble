@@ -5,7 +5,8 @@ Class {
 		'projectDirectory',
 		'projectDescription',
 		'projectStatus',
-		'projectName'
+		'projectName',
+		'project'
 	],
 	#category : 'Ensemble-Lepiter',
 	#package : 'Ensemble-Lepiter'
@@ -59,12 +60,47 @@ GtEnsembleProjectSnippet >> contentAsString [
 	^ projectDescription ifNil: [ '' ]
 ]
 
+{ #category : 'accessing' }
+GtEnsembleProjectSnippet >> createLinkedProject [
+	"Create a GtEnsembleProject backed by this snippet's page."
+	| page proj dir |
+	page := self page.
+	page ifNil: [ ^ nil ].
+	dir := projectDirectory isNil or: [ projectDirectory isEmpty ].
+	dir := dir ifTrue: [ nil ] ifFalse: [ 
+		(projectDirectory beginsWith: '~/')
+			ifTrue: [ (FileLocator home / (projectDirectory allButFirst: 2)) pathString ]
+			ifFalse: [ projectDirectory ] ].
+	proj := GtEnsembleBoard current
+		addProjectNamed: self projectName
+		directory: dir
+		description: (projectDescription ifEmpty: [ nil ])
+		status: (projectStatus ifNil: [ 'Backlog' ]).
+	proj page: page.
+	GtEnsembleBoard current saveProject: proj.
+	^ proj
+]
+
 { #category : 'initialization' }
 GtEnsembleProjectSnippet >> initialize [
 	super initialize.
 	projectStatus := 'Backlog'.
 	projectDirectory := ''.
 	projectDescription := ''
+]
+
+{ #category : 'accessing' }
+GtEnsembleProjectSnippet >> linkedProject [
+	"Return the linked GtEnsembleProject.
+	 Primary: direct back-ref (set during loadProjectMetadata:into:).
+	 Fallback: match by page (project whose page is our page)."
+	| page |
+	project ifNotNil: [ ^ project ].
+	page := self page.
+	page ifNil: [ ^ nil ].
+	^ GtEnsembleBoard current projects
+		detect: [ :p | p page == page ]
+		ifNone: [ nil ]
 ]
 
 { #category : 'export' }
@@ -80,6 +116,16 @@ GtEnsembleProjectSnippet >> markdownOn: aStream level: anInteger [
 ]
 
 { #category : 'accessing' }
+GtEnsembleProjectSnippet >> project [
+	^ project
+]
+
+{ #category : 'accessing' }
+GtEnsembleProjectSnippet >> project: aProject [
+	project := aProject
+]
+
+{ #category : 'accessing' }
 GtEnsembleProjectSnippet >> projectDescription [
 	^ projectDescription
 ]
@@ -88,7 +134,8 @@ GtEnsembleProjectSnippet >> projectDescription [
 GtEnsembleProjectSnippet >> projectDescription: aString [
 	projectDescription := aString.
 	self updateEditTimeAndEmail.
-	self announceContentChangedBy: self
+	self announceContentChangedBy: self.
+	project ifNotNil: [ project syncFromSnippet ]
 ]
 
 { #category : 'accessing' }
@@ -100,7 +147,8 @@ GtEnsembleProjectSnippet >> projectDirectory [
 GtEnsembleProjectSnippet >> projectDirectory: aString [
 	projectDirectory := aString.
 	self updateEditTimeAndEmail.
-	self announceContentChangedBy: self
+	self announceContentChangedBy: self.
+	project ifNotNil: [ project syncFromSnippet ]
 ]
 
 { #category : 'accessing' }
@@ -112,7 +160,8 @@ GtEnsembleProjectSnippet >> projectName [
 GtEnsembleProjectSnippet >> projectName: aString [
 	projectName := aString.
 	self updateEditTimeAndEmail.
-	self announceContentChangedBy: self
+	self announceContentChangedBy: self.
+	project ifNotNil: [ project syncFromSnippet ]
 ]
 
 { #category : 'accessing' }
@@ -124,7 +173,8 @@ GtEnsembleProjectSnippet >> projectStatus [
 GtEnsembleProjectSnippet >> projectStatus: aString [
 	projectStatus := aString.
 	self updateEditTimeAndEmail.
-	self announceContentChangedBy: self
+	self announceContentChangedBy: self.
+	project ifNotNil: [ project syncFromSnippet ]
 ]
 
 { #category : 'accessing' }

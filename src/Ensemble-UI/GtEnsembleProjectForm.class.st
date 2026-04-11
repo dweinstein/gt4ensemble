@@ -14,19 +14,23 @@ Class {
 
 { #category : 'actions' }
 GtEnsembleProjectForm >> createProject [
-	"Create the project from form data and add to the board"
-	| dir desc page proj |
+	"Create the project from form data and add to the board.
+	 If a page with the same title already exists in the database, reuse it."
+	| dir desc name page proj |
+	name := projectName trimBoth.
 	dir := projectDirectory trimBoth ifEmpty: [ nil ].
 	dir ifNotNil: [
 		(dir beginsWith: '~/') ifTrue: [
 			dir := (FileLocator home / (dir allButFirst: 2)) pathString ] ].
 	desc := projectDescription trimBoth ifEmpty: [ nil ].
 	
-	page := LePage named: projectName trimBoth.
-	projectDatabase addPage: page.
+	page := projectDatabase pages detect: [ :p | p title = name ] ifNone: [ nil ].
+	page ifNil: [
+		page := LePage named: name.
+		projectDatabase addPage: page ].
 	
 	proj := GtEnsembleBoard current
-		addProjectNamed: projectName trimBoth
+		addProjectNamed: name
 		directory: dir
 		description: desc
 		status: 'Backlog'.

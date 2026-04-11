@@ -138,7 +138,7 @@ GtEnsembleTask >> hasTag: aTagOrName [
 GtEnsembleTask >> initialize [
 	super initialize.
 	status := 'Backlog'.
-	tags := OrderedCollection new.
+	tags := GtEnsembleTagGroup new.
 	createdAt := DateAndTime now.
 	updatedAt := DateAndTime now
 ]
@@ -200,6 +200,16 @@ GtEnsembleTask >> notes: aString [
 	self syncToSnippet
 ]
 
+{ #category : 'magritte-descriptions' }
+GtEnsembleTask >> notesDescription [
+	<magritteDescription>
+	^ MAMemoDescription new
+		label: 'Notes';
+		priority: 4;
+		accessor: #notes;
+		labelAptitude: [ BrGlamorousLabelAptitude new glamorousFormLabelStyle ]
+]
+
 { #category : 'printing' }
 GtEnsembleTask >> printOn: aStream [
 	super printOn: aStream.
@@ -222,6 +232,16 @@ GtEnsembleTask >> priority: anInteger [
 	self syncToSnippet
 ]
 
+{ #category : 'magritte-descriptions' }
+GtEnsembleTask >> priorityDescription [
+	<magritteDescription>
+	^ MANumberDescription new
+		label: 'Priority';
+		priority: 3;
+		accessor: #priority;
+		labelAptitude: [ BrGlamorousLabelAptitude new glamorousFormLabelStyle ]
+]
+
 { #category : 'accessing' }
 GtEnsembleTask >> project [
 	^ project
@@ -234,7 +254,7 @@ GtEnsembleTask >> project: aProject [
 
 { #category : 'tags' }
 GtEnsembleTask >> removeTag: aTag [
-	tags remove: aTag ifAbsent: [].
+	(tags includes: aTag) ifTrue: [ tags remove: aTag ].
 	self touch
 ]
 
@@ -269,6 +289,18 @@ GtEnsembleTask >> statusColor [
 	status = 'Done' ifTrue: [ ^ Color fromHexString: '27ae60' ].
 	status = 'Cancelled' ifTrue: [ ^ Color fromHexString: 'bdc3c7' ].
 	^ Color gray
+]
+
+{ #category : 'magritte-descriptions' }
+GtEnsembleTask >> statusDescription [
+	<magritteDescription>
+	^ MASingleOptionDescription new
+		label: 'Status';
+		priority: 2;
+		accessor: #status;
+		options: self class statuses;
+		labelAptitude: [ BrGlamorousLabelAptitude new glamorousFormLabelStyle ];
+		beRequired
 ]
 
 { #category : 'syncing' }
@@ -337,6 +369,17 @@ GtEnsembleTask >> title: aString [
 	title := aString.
 	self touch.
 	self syncToSnippet
+]
+
+{ #category : 'magritte-descriptions' }
+GtEnsembleTask >> titleDescription [
+	<magritteDescription>
+	^ MAStringDescription new
+		label: 'Title';
+		priority: 1;
+		accessor: #title;
+		labelAptitude: [ BrGlamorousLabelAptitude new glamorousFormLabelStyle ];
+		beRequired
 ]
 
 { #category : 'private' }
