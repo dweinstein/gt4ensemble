@@ -45,18 +45,22 @@ GtEnsembleProject >> activeTaskCount [
 	^ (tasks select: [ :t | t isActive ]) size
 ]
 
-{ #category : 'tasks' }
+{ #category : 'accessing' }
 GtEnsembleProject >> addTask: aTask [
 	tasks add: aTask.
 	aTask project: self.
 	self touch.
-	GtEnsembleBoard current announcer announce: GtEnsembleBoardUpdated new.
 	^ aTask
 ]
 
 { #category : 'tasks' }
 GtEnsembleProject >> addTaskNamed: aString [
 	^ self addTask: (GtEnsembleTask title: aString)
+]
+
+{ #category : 'syncing' }
+GtEnsembleProject >> beSyncing: aBoolean [
+	syncing := aBoolean
 ]
 
 { #category : 'accessing' }
@@ -367,12 +371,11 @@ GtEnsembleProject >> projectSnippet [
 		ifNone: [ nil ]
 ]
 
-{ #category : 'tasks' }
+{ #category : 'accessing' }
 GtEnsembleProject >> removeTask: aTask [
-	tasks remove: aTask ifAbsent: [].
+	tasks items remove: aTask ifAbsent: [].
 	aTask project: nil.
-	self touch.
-	GtEnsembleBoard current announcer announce: GtEnsembleBoardUpdated new
+	self touch
 ]
 
 { #category : 'sessions' }
@@ -406,8 +409,7 @@ GtEnsembleProject >> status [
 GtEnsembleProject >> status: aString [
 	status := aString.
 	self touch.
-	self syncToSnippet.
-	GtEnsembleBoard current announcer announce: GtEnsembleBoardUpdated new
+	self syncToSnippet
 ]
 
 { #category : 'status' }
@@ -481,9 +483,11 @@ GtEnsembleProject >> tasksDone [
 	^ tasks select: [ :t | t isDone ]
 ]
 
-{ #category : 'private' }
+{ #category : 'syncing' }
 GtEnsembleProject >> touch [
-	updatedAt := DateAndTime now
+	updatedAt := DateAndTime now.
+	self isSyncing ifTrue: [ ^ self ].
+	GtEnsembleBoard current announcer announce: GtEnsembleBoardUpdated new
 ]
 
 { #category : 'accessing' }

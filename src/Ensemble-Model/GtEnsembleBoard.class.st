@@ -268,20 +268,22 @@ GtEnsembleBoard >> loadProjectTasks: taskSnippets into: proj [
 	taskSnippets do: [ :snippet |
 		| task |
 		task := GtEnsembleTask new.
-		task title: snippet title.
-		task status: (snippet status ifNil: [ 'Backlog' ]).
-		task priority: snippet priority.
-		task notes: snippet taskNotes.
-		snippet tagNames ifNotNil: [ :names |
+		task beSyncing: true.
+		[ task title: snippet title.
+		  task status: (snippet status ifNil: [ 'Backlog' ]).
+		  task priority: snippet priority.
+		  task notes: snippet taskNotes.
+		  snippet tagNames ifNotNil: [ :names |
 			names do: [ :tagName |
 				| tag |
 				tag := self tagNamed: tagName.
 				tag ifNil: [ tag := self addTag: (GtEnsembleTag name: tagName color: Color gray) ].
 				task addTag: tag ] ].
-		"Establish two-way binding"
-		task snippet: snippet.
-		snippet task: task.
-		proj addTask: task ]
+		  "Establish two-way binding"
+		  task snippet: snippet.
+		  snippet task: task.
+		  proj addTask: task
+		] ensure: [ task beSyncing: false ] ]
 ]
 
 { #category : 'printing' }
@@ -302,10 +304,12 @@ GtEnsembleBoard >> projectFromPage: aPage taskSnippets: taskSnippets [
 	"Build a GtEnsembleProject from a Lepiter page"
 	| proj |
 	proj := GtEnsembleProject new.
-	proj name: aPage title.
-	proj page: aPage.
-	self loadProjectMetadata: aPage into: proj.
-	self loadProjectTasks: taskSnippets into: proj.
+	proj beSyncing: true.
+	[ proj name: aPage title.
+	  proj page: aPage.
+	  self loadProjectMetadata: aPage into: proj.
+	  self loadProjectTasks: taskSnippets into: proj
+	] ensure: [ proj beSyncing: false ].
 	^ proj
 ]
 

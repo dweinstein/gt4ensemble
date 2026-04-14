@@ -129,7 +129,7 @@ GtEnsembleBoardElement >> buildDraggableCardFor: anEntity [
 		anEvent currentTarget removeFromParent ].
 	wrapper when: BlClickEvent do: [ :e | 
 		e consumed: true.
-		wrapper phlow spawnObject: anEntity ].
+		wrapper phlow spawnOrShowObject: anEntity ].
 	^ wrapper
 ]
 

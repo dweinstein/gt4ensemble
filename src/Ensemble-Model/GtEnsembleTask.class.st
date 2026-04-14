@@ -38,6 +38,11 @@ GtEnsembleTask >> addTag: aTag [
 	self touch
 ]
 
+{ #category : 'syncing' }
+GtEnsembleTask >> beSyncing: aBoolean [
+	syncing := aBoolean
+]
+
 { #category : 'accessing' }
 GtEnsembleTask >> createdAt [
 	^ createdAt
@@ -284,12 +289,11 @@ GtEnsembleTask >> status [
 	^ status
 ]
 
-{ #category : 'api' }
+{ #category : 'accessing' }
 GtEnsembleTask >> status: aString [
 	status := aString.
 	self touch.
-	self syncToSnippet.
-	GtEnsembleBoard current announcer announce: GtEnsembleBoardUpdated new
+	self syncToSnippet
 ]
 
 { #category : 'status' }
@@ -393,9 +397,11 @@ GtEnsembleTask >> titleDescription [
 		beRequired
 ]
 
-{ #category : 'private' }
+{ #category : 'syncing' }
 GtEnsembleTask >> touch [
-	updatedAt := DateAndTime now
+	updatedAt := DateAndTime now.
+	self isSyncing ifTrue: [ ^ self ].
+	GtEnsembleBoard current announcer announce: GtEnsembleBoardUpdated new
 ]
 
 { #category : 'accessing' }

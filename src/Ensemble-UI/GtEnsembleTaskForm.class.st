@@ -18,8 +18,11 @@ GtEnsembleTaskForm class >> forProject: aProject [
 
 { #category : 'actions' }
 GtEnsembleTaskForm >> createTask [
-	"Create the task and add to the project"
-	^ taskProject addTaskNamed: taskTitle trimBoth
+	"Create the task, add it to the project, and persist it to the project page"
+	| task |
+	task := taskProject addTaskNamed: taskTitle trimBoth.
+	GtEnsembleBoard current saveProject: taskProject.
+	^ task
 ]
 
 { #category : 'initialization' }
