@@ -5,6 +5,70 @@ Class {
 	#package : 'Ensemble-Examples'
 }
 
+{ #category : 'examples - persistence' }
+GtEnsembleExamples >> exampleAddTaskOnEphemeralProjectDefers [
+	"addTask: on a project without a page must NOT auto-create a page or snippet —
+	 leave the task snippet-less so saveProject: can handle it later."
+	<gtExample>
+	| proj task |
+	proj := GtEnsembleProject new name: 'Ephemeral'.
+	
+	task := proj addTaskNamed: 'A task'.
+	
+	self assert: proj page isNil.
+	self assert: task snippet isNil.
+	self assert: (proj tasks items includes: task).
+	self assert: task project == proj.
+	^ proj
+]
+
+{ #category : 'examples - persistence' }
+GtEnsembleExamples >> exampleAddTaskPersistsImmediately [
+	"addTask: on a project with a page must create a task snippet on the page,
+	 so the task survives reload without callers needing to call saveProject:."
+	<gtExample>
+	| db page proj task |
+	db := LeDatabase new.
+	page := LePage named: 'Test Project'.
+	db addPage: page.
+	proj := GtEnsembleProject new name: 'Test Project'.
+	proj page: page.
+	
+	task := proj addTaskNamed: 'A task'.
+	
+	self assert: task snippet notNil.
+	self assert: (page children includes: task snippet).
+	self assert: task snippet title equals: 'A task'.
+	^ proj
+]
+
+{ #category : 'examples - persistence' }
+GtEnsembleExamples >> exampleAddTaskWithExistingSnippetSkipsCreation [
+	"During load, addTask: must NOT create a duplicate snippet for tasks
+	 that already have one (load-time invariant)."
+	<gtExample>
+	| db page proj task fakeSnippet beforeCount |
+	db := LeDatabase new.
+	page := LePage named: 'Test Project'.
+	db addPage: page.
+	proj := GtEnsembleProject new name: 'Test Project'.
+	proj page: page.
+	
+	"Simulate load: task already has a snippet before addTask: runs"
+	task := GtEnsembleTask new title: 'Pre-snippet task'.
+	fakeSnippet := GtEnsembleTaskSnippet new.
+	fakeSnippet task: task.
+	task snippet: fakeSnippet.
+	
+	beforeCount := page children size.
+	proj addTask: task.
+	
+	self assert: page children size equals: beforeCount.
+	self assert: task snippet == fakeSnippet.
+	self assert: (page children includes: fakeSnippet) not.
+	^ proj
+]
+
 { #category : 'examples' }
 GtEnsembleExamples >> exampleBoard [
 	<gtExample>

@@ -47,8 +47,13 @@ GtEnsembleProject >> activeTaskCount [
 
 { #category : 'accessing' }
 GtEnsembleProject >> addTask: aTask [
+	"Add aTask to this project.
+	 Maintains the persistence invariant: if the project has a Lepiter page,
+	 the task gets a snippet on that page immediately. Callers should NOT
+	 need to follow with saveProject: for basic persistence."
 	tasks add: aTask.
 	aTask project: self.
+	self ensureTaskSnippet: aTask.
 	self touch.
 	^ aTask
 ]
@@ -135,6 +140,21 @@ GtEnsembleProject >> directoryString: aString [
 			(trimmed beginsWith: '~/')
 				ifTrue: [ self directory: (FileLocator home / (trimmed allButFirst: 2)) ]
 				ifFalse: [ self directory: trimmed asFileReference ] ]
+]
+
+{ #category : 'persistence' }
+GtEnsembleProject >> ensureTaskSnippet: aTask [
+	"Ensure aTask has a snippet on the project's page.
+	 If the project is ephemeral (no page yet), leave the task snippet-less —
+	 saveProject: will create the snippet when the project is persisted."
+	| snippet |
+	aTask snippet ifNotNil: [ ^ self ].
+	self page ifNil: [ ^ self ].
+	snippet := GtEnsembleTaskSnippet new.
+	aTask snippet: snippet.
+	snippet task: aTask.
+	self page addSnippet: snippet.
+	aTask syncToSnippet
 ]
 
 { #category : 'gt - extensions' }
