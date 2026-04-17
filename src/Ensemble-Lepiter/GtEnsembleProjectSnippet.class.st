@@ -50,6 +50,15 @@ GtEnsembleProjectSnippet >> acceptVisitor: aVisitor [
 	^ aVisitor visitEnsembleProjectSnippet: self
 ]
 
+{ #category : 'syncing' }
+GtEnsembleProjectSnippet >> announceContentChangedBy: aSourceObject [
+	"Sync the linked project on every content change. The project's
+	 isSyncing flag short-circuits the loop when this announce was triggered
+	 by syncToSnippet."
+	super announceContentChangedBy: aSourceObject.
+	project ifNotNil: [ project isSyncing ifFalse: [ project syncFromSnippet ] ]
+]
+
 { #category : 'accessing' }
 GtEnsembleProjectSnippet >> asSnippetViewModel [
 	^ GtEnsembleProjectSnippetViewModel new snippetModel: self
@@ -147,8 +156,7 @@ GtEnsembleProjectSnippet >> projectDescription [
 GtEnsembleProjectSnippet >> projectDescription: aString [
 	projectDescription := aString.
 	self updateEditTimeAndEmail.
-	self announceContentChangedBy: self.
-	project ifNotNil: [ project syncFromSnippet ]
+	self announceContentChangedBy: self
 ]
 
 { #category : 'accessing' }
@@ -160,8 +168,7 @@ GtEnsembleProjectSnippet >> projectDirectory [
 GtEnsembleProjectSnippet >> projectDirectory: aString [
 	projectDirectory := aString.
 	self updateEditTimeAndEmail.
-	self announceContentChangedBy: self.
-	project ifNotNil: [ project syncFromSnippet ]
+	self announceContentChangedBy: self
 ]
 
 { #category : 'accessing' }
@@ -173,8 +180,7 @@ GtEnsembleProjectSnippet >> projectName [
 GtEnsembleProjectSnippet >> projectName: aString [
 	projectName := aString.
 	self updateEditTimeAndEmail.
-	self announceContentChangedBy: self.
-	project ifNotNil: [ project syncFromSnippet ]
+	self announceContentChangedBy: self
 ]
 
 { #category : 'accessing' }
@@ -186,8 +192,7 @@ GtEnsembleProjectSnippet >> projectStatus [
 GtEnsembleProjectSnippet >> projectStatus: aString [
 	projectStatus := aString.
 	self updateEditTimeAndEmail.
-	self announceContentChangedBy: self.
-	project ifNotNil: [ project syncFromSnippet ]
+	self announceContentChangedBy: self
 ]
 
 { #category : 'accessing' }

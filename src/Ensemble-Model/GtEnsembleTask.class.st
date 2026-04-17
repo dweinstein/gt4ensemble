@@ -320,17 +320,18 @@ GtEnsembleTask >> statusDescription [
 
 { #category : 'syncing' }
 GtEnsembleTask >> syncFromSnippet [
-	"Pull state from the linked snippet into this domain object"
+	"Pull state from the linked snippet into this domain object.
+	 Re-entrance from snippet setters during syncToSnippet is guarded on the
+	 setter side (snippet checks task isSyncing before calling back), so this
+	 method runs unconditionally when invoked. touch's announce is suppressed
+	 by the caller's beSyncing: flag if needed (e.g. during load)."
 	snippet ifNil: [ ^ self ].
-	self isSyncing ifTrue: [ ^ self ].
-	syncing := true.
-	[ title := snippet title.
-	  status := snippet status ifNil: [ 'Backlog' ].
-	  priority := snippet priority.
-	  notes := snippet taskNotes.
-	  self syncTagsFromSnippet.
-	  self touch
-	] ensure: [ syncing := false ]
+	title := snippet title.
+	status := snippet status ifNil: [ 'Backlog' ].
+	priority := snippet priority.
+	notes := snippet taskNotes.
+	self syncTagsFromSnippet.
+	self touch
 ]
 
 { #category : 'syncing' }

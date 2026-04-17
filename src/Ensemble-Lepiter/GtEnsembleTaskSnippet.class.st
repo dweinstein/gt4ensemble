@@ -52,6 +52,14 @@ GtEnsembleTaskSnippet >> acceptVisitor: aVisitor [
 	^ aVisitor visitEnsembleTaskSnippet: self
 ]
 
+{ #category : 'syncing' }
+GtEnsembleTaskSnippet >> announceContentChangedBy: aSourceObject [
+	"Sync the linked task on every content change. The task's isSyncing flag
+	 short-circuits the loop when this announce was triggered by syncToSnippet."
+	super announceContentChangedBy: aSourceObject.
+	task ifNotNil: [ task isSyncing ifFalse: [ task syncFromSnippet ] ]
+]
+
 { #category : 'accessing' }
 GtEnsembleTaskSnippet >> asSnippetViewModel [
 	^ GtEnsembleTaskSnippetViewModel new snippetModel: self
@@ -144,8 +152,7 @@ GtEnsembleTaskSnippet >> priority [
 GtEnsembleTaskSnippet >> priority: aValue [
 	priority := aValue.
 	self updateEditTimeAndEmail.
-	self announceContentChangedBy: self.
-	task ifNotNil: [ task syncFromSnippet ]
+	self announceContentChangedBy: self
 ]
 
 { #category : 'accessing' }
@@ -157,8 +164,7 @@ GtEnsembleTaskSnippet >> status [
 GtEnsembleTaskSnippet >> status: aString [
 	status := aString.
 	self updateEditTimeAndEmail.
-	self announceContentChangedBy: self.
-	task ifNotNil: [ task syncFromSnippet ]
+	self announceContentChangedBy: self
 ]
 
 { #category : 'accessing' }
@@ -198,8 +204,7 @@ GtEnsembleTaskSnippet >> tagNames [
 GtEnsembleTaskSnippet >> tagNames: anArray [
 	tagNames := anArray.
 	self updateEditTimeAndEmail.
-	self announceContentChangedBy: self.
-	task ifNotNil: [ task syncFromSnippet ]
+	self announceContentChangedBy: self
 ]
 
 { #category : 'accessing' }
@@ -221,8 +226,7 @@ GtEnsembleTaskSnippet >> taskNotes [
 GtEnsembleTaskSnippet >> taskNotes: aString [
 	taskNotes := aString.
 	self updateEditTimeAndEmail.
-	self announceContentChangedBy: self.
-	task ifNotNil: [ task syncFromSnippet ]
+	self announceContentChangedBy: self
 ]
 
 { #category : 'accessing' }
@@ -234,6 +238,5 @@ GtEnsembleTaskSnippet >> title [
 GtEnsembleTaskSnippet >> title: aString [
 	title := aString.
 	self updateEditTimeAndEmail.
-	self announceContentChangedBy: self.
-	task ifNotNil: [ task syncFromSnippet ]
+	self announceContentChangedBy: self
 ]

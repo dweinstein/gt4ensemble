@@ -451,17 +451,18 @@ GtEnsembleProject >> statusDescription [
 
 { #category : 'syncing' }
 GtEnsembleProject >> syncFromSnippet [
-	"Pull state from the linked project snippet without triggering sync-back"
+	"Pull state from the linked project snippet.
+	 Re-entrance from snippet setters during syncToSnippet is guarded on the
+	 setter side (snippet checks project isSyncing before calling back), so
+	 this method runs unconditionally when invoked. touch's announce is
+	 suppressed by the caller's beSyncing: flag if needed (e.g. during load)."
 	| snippet |
 	snippet := self projectSnippet.
 	snippet ifNil: [ ^ self ].
-	self isSyncing ifTrue: [ ^ self ].
-	syncing := true.
-	[ directory := (snippet projectDirectory ifEmpty: [ nil ]) ifNotNil: [ :d | d asFileReference ].
-	  description := snippet projectDescription ifEmpty: [ nil ].
-	  status := snippet projectStatus ifNil: [ 'Backlog' ].
-	  self touch
-	] ensure: [ syncing := false ]
+	directory := (snippet projectDirectory ifEmpty: [ nil ]) ifNotNil: [ :d | d asFileReference ].
+	description := snippet projectDescription ifEmpty: [ nil ].
+	status := snippet projectStatus ifNil: [ 'Backlog' ].
+	self touch
 ]
 
 { #category : 'syncing' }
